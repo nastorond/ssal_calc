@@ -1,0 +1,37 @@
+# ===============================================================
+# Python .gitignore
+# ===============================================================
+
+# 가상환경 (Virtual Environments)
+# Mac/Linux/Windows에서 공통적으로 사용되는 가상환경 폴더명
+venv/
+env/
+.venv/
+.env/
+
+# 빌드 결과물 (PyInstaller)
+# 빌드 과정에서 생성되는 폴더와 파일
+build/
+dist/
+*.spec
+
+# Python 캐시 파일
+# 실행 속도 향상을 위해 파이썬이 자동으로 생성하는 파일들
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# 운영체제(OS) 자동 생성 파일
+# Mac, Windows 등에서 자동으로 생성하는 시스템 파일
+.DS_Store
+Thumbs.db
+
+# IDE 및 편집기 설정 파일
+# VSCode, PyCharm 등 코드 편집기의 설정 폴더
+.vscode/
+.idea/
+
+# 데이터 파일
+# 사용자의 입력값을 저장하는 데이터 파일은 보통 공유하지 않음
+calculator_data.json
