@@ -20,18 +20,59 @@ def calculate_profits(inputs):
         profit_celebration = (celebration_price * 3 - base_cost) * 100 * 0.95 if celebration_price > 0 else 0
         profit_recharge = (recharge_price * 3 - base_cost2) * 100 * 0.95 if recharge_price > 0 else 0
         profit_small_recharge = (small_recharge_price * 6 - base_cost3) * 100 * 0.95 if small_recharge_price > 0 else 0
-        
+
         # 결과를 텍스트로 포맷팅
         result_text = (
             f"경축비 {profit_celebration:,.0f} 원\n"
             f"재획비 {profit_recharge:,.0f} 원\n"
             f"소형 재획비 {profit_small_recharge:,.0f} 원"
         )
-        
+
         # [수정] 성공 시 글자색을 'black'으로 반환
         return result_text, "black"
-        
+
     except (ValueError, TypeError):
         return "모든 칸에 숫자를 올바르게 입력해주세요.", "#FF4136" # 에러는 빨간색 유지
     except Exception as e:
         return f"알 수 없는 오류가 발생했습니다:\n{e}", "#FF4136"
+
+def calculate_fatigue_profit(seed_price, oil_price):
+    """
+    피로도 500 소모 시 쥬니퍼베리 씨앗 오일 제작/판매 이윤을 계산합니다.
+    """
+    try:
+        # 입력 값 검증 및 숫자 변환
+        seed_price = float(seed_price.replace(",", ""))
+        oil_price = float(oil_price.replace(",", ""))
+
+        # 고정값 설정
+        fatigue_limit = 500
+        fatigue_per_craft = 1
+        seeds_per_craft = 6
+        cost_per_craft = 1000
+        success_rate = 0.90
+        
+        # 총 제작 시도 횟수
+        num_attempts = fatigue_limit // fatigue_per_craft
+        
+        # 1회 제작 시도 비용
+        cost_per_attempt = (seed_price * seeds_per_craft) + cost_per_craft
+
+        # 총 제작 비용
+        total_cost = num_attempts * cost_per_attempt
+
+        # 예상 성공 수량
+        expected_successes = num_attempts * success_rate
+
+        # 총 예상 수익 (수수료 미반영)
+        total_revenue = expected_successes * oil_price
+
+        # 최종 이윤
+        final_profit = total_revenue - total_cost
+
+        return (
+            f"피로도 500 소모 시 예상 이윤:\n"
+            f"{final_profit:,.0f} 메소"
+        )
+    except (ValueError, TypeError):
+        return "씨앗과 오일 가격을 숫자로 입력해주세요."
