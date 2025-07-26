@@ -1,3 +1,5 @@
+# ui.py
+
 import tkinter as tk
 from tkinter import ttk, END
 import ttkbootstrap as ttk
@@ -20,17 +22,13 @@ def resource_path(relative_path):
 class CalculatorUI:
     def __init__(self, root):
         self.root = root
-        self.root.title("비약 수익 계산기 v1.2")
-
-        # [추가] 실행 중인 창의 아이콘을 설정합니다.
+        self.root.title("비약 수익 계산기 v1.3") # 버전 업데이트
         self.root.iconbitmap(resource_path("icons/icon.ico"))
-
         self.root.attributes('-topmost', True)
 
         self._create_variables()
         self._create_widgets()
 
-        # 데이터를 불러온 후, 불러온 값에도 쉼표 서식을 적용합니다.
         load_data(self.app_vars)
         self._format_all_entries()
 
@@ -45,6 +43,8 @@ class CalculatorUI:
             "alpha": tk.DoubleVar(value=1.0),
             "fatigue_seed_price": tk.StringVar(),
             "fatigue_oil_price": tk.StringVar(),
+            # [추가] 피로도 소모량 입력을 위한 변수
+            "fatigue_count": tk.StringVar(),
         }
 
     def _create_widgets(self):
@@ -60,24 +60,21 @@ class CalculatorUI:
         notebook = ttk.Notebook(main_frame)
         notebook.pack(fill=BOTH, expand=YES, padx=5, pady=5)
 
-        # --- 비약 수익 계산 탭 --- 
+        # --- 비약 수익 계산 탭 ---
         tab1 = ttk.Frame(notebook)
         notebook.add(tab1, text="비약 수익 계산")
-
+        # (비약 수익 계산 탭의 내용은 변경되지 않음)
         material_frame = ttk.LabelFrame(tab1, text=" 재료 가격 입력 ", padding=10)
         material_frame.pack(fill=X, padx=10, pady=5)
         self.oil_entry = self._create_entry(material_frame, "쥬니퍼베리 씨앗 오일:", self.app_vars["oil"])
         self.item_entry = self._create_entry(material_frame, "최상급 아이템 결정:", self.app_vars["item"])
         self.stone_entry = self._create_entry(material_frame, "현자의 돌:", self.app_vars["stone"])
-
         selling_frame = ttk.LabelFrame(tab1, text=" 완제품 경매장 단가 입력 ", padding=10)
         selling_frame.pack(fill=X, padx=10, pady=5)
         self.celebration_entry = self._create_entry(selling_frame, "경축비:", self.app_vars["celebration"])
         self.recharge_entry = self._create_entry(selling_frame, "재획비:", self.app_vars["recharge"])
         self.small_recharge_entry = self._create_entry(selling_frame, "소형 재획비:", self.app_vars["small_recharge"])
-
         ttk.Button(tab1, text="계산하기", command=self.run_calculation, bootstyle=SUCCESS).pack(fill=X, padx=10, pady=10, ipady=5)
-
         result_frame = ttk.LabelFrame(tab1, text=" 📊 계산 결과 ", padding=10)
         result_frame.pack(fill=BOTH, expand=YES, padx=10, pady=5)
         self.result_label = ttk.Label(result_frame, text="...계산 버튼을 눌러주세요...", font=("-size 16 -weight bold"), anchor=CENTER)
@@ -92,12 +89,14 @@ class CalculatorUI:
 
         self.fatigue_seed_price_entry = self._create_entry(fatigue_frame, "씨앗 가격:", self.app_vars["fatigue_seed_price"])
         self.fatigue_oil_price_entry = self._create_entry(fatigue_frame, "오일 가격:", self.app_vars["fatigue_oil_price"])
+        # [추가] 피로도 소모량 입력 위젯 생성
+        self.fatigue_count_entry = self._create_entry(fatigue_frame, "사용가능 피로도:", self.app_vars["fatigue_count"])
 
         ttk.Button(tab3, text="계산하기", command=self.run_fatigue_calculation, bootstyle=SUCCESS).pack(fill=X, padx=10, pady=10)
 
         fatigue_result_frame = ttk.LabelFrame(tab3, text=" 📊 계산 결과 ", padding=10)
         fatigue_result_frame.pack(fill=BOTH, expand=YES, padx=10, pady=5)
-        self.fatigue_result_label = ttk.Label(fatigue_result_frame, text="...계산 버튼을 눌러주세요...", font=("-size 16 -weight bold"), anchor=CENTER)
+        self.fatigue_result_label = ttk.Label(fatigue_result_frame, text="...계산 버튼을 눌러주세요...\n(피로도 비입력시 500으로 계산)", font=("-size 14 -weight bold"), anchor=CENTER)
         self.fatigue_result_label.pack(fill=BOTH, expand=YES)
 
     def _create_entry(self, parent, label_text, string_var):
@@ -122,9 +121,14 @@ class CalculatorUI:
 
     def _format_all_entries(self):
         """프로그램 시작 시 모든 입력 칸의 숫자 서식을 일괄 변경합니다."""
-        for entry_widget in [self.oil_entry, self.item_entry, self.stone_entry,
-                             self.celebration_entry, self.recharge_entry, self.small_recharge_entry,
-                             self.fatigue_seed_price_entry, self.fatigue_oil_price_entry]:
+        # [수정] 새로 추가된 피로도 입력칸을 포함시킴
+        all_entries = [
+            self.oil_entry, self.item_entry, self.stone_entry,
+            self.celebration_entry, self.recharge_entry, self.small_recharge_entry,
+            self.fatigue_seed_price_entry, self.fatigue_oil_price_entry,
+            self.fatigue_count_entry
+        ]
+        for entry_widget in all_entries:
             current_value = entry_widget.get()
             cleaned_value = "".join(filter(str.isdigit, current_value))
             if cleaned_value:
@@ -147,7 +151,11 @@ class CalculatorUI:
         self._format_all_entries()
         seed_price = self.app_vars["fatigue_seed_price"].get().replace(",", "")
         oil_price = self.app_vars["fatigue_oil_price"].get().replace(",", "")
-        result_text = calculate_fatigue_profit(seed_price, oil_price)
+        # [추가] 입력된 피로도 값을 가져옴
+        fatigue_count = self.app_vars["fatigue_count"].get().replace(",", "")
+        
+        # [수정] 피로도 값을 logic 함수로 전달
+        result_text = calculate_fatigue_profit(seed_price, oil_price, fatigue_count)
         self.fatigue_result_label.config(text=result_text)
 
     def on_closing(self):

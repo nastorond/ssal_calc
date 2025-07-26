@@ -1,15 +1,37 @@
 # ssal_calc
-- 메이플 피로도 당 재획비, 경축비, 소형재획비 효율 계산기 입니다.
-- 각 효율은 피로도 500을 모두 태운 것을 기준으로 함
-- Python 3.12.10
+
+- 메이플스토리 유저를 위한 수익 효율 계산기입니다. 전문기술 '연금술'로 비약을 제작하거나 쥬니퍼베리 씨앗 오일을 제작할 때의 순수익을 손쉽게 계산하여, 가장 효율적인 방법을 찾을 수 있도록 돕습니다.
+
+<br>
+
+## ✨ 주요 기능
+- 비교 분석: 재획비, 경축비, 소형 재획비 제작에 필요한 재료비를 바탕으로 어떤 비약이 가장 높은 수익을 내는지 한눈에 비교할 수 있습니다.
+
+- 오일 제작 이윤 계산: 소모할 피로도를 직접 입력하여 쥬니퍼베리 씨앗 오일 제작 시의 순이익을 계산합니다. (미입력 시 500으로 자동 계산)
+
+- 투명도 조절: 계산기 창의 투명도를 조절하여 게임 화면 위에 띄워놓고 편리하게 사용할 수 있습니다.
+
+- 데이터 자동 저장: 마지막으로 입력한 가격을 자동으로 저장하고 불러와, 프로그램을 다시 켰을 때 매번 입력할 필요가 없습니다.
+
+## 🚀 사용 방법
+### 1. 완성된 프로그램 사용하기(윈도우만 가능)
+[**⬇️ 최신 버전 다운로드 (v1.3)**](./release/쌀먹계산기.zip)
+
+- 압축을 해제한 후, 폴더 안의 main.exe 파일을 실행하여 바로 사용합니다.
+
+### 2. 직접 빌드하여 사용하기
 
 ```python
 pip install pyinstaller
 pip install ttkbootstrap
 
-pyinstaller --onefile --windowed main.py # build
-pyinstaller --onefile --noconsole --icon="icons/icon.ico" --add-data="icons;icons" main.py # only windows
+pyinstaller --onefile --windowed main.py # mac build
+pyinstaller --onefile --noconsole --icon="icons/icon.ico" --add-data="icons;icons" main.py # windows build
 ```
 
-- buil 해서 /dist 내부 exe 파일을 실행시키면 됩니다.
-- 쌀먹계산기 v1.1.zip 파일을 다운로드 해서 압축 풀어서 바로 사용 가능
+## 💻 스크린샷
+
+| **비약 수익 계산 탭** | **피로도 소모 계산 탭** |
+| :---: | :---: |
+| <img src="images/tap1.png" alt="비약 수익 계산기 UI" width="400"> | <img src="images/tap2.png" alt="피로도 소모 계산기 UI" width="400"> |
+| 재료 및 완제품 가격을 입력하여<br>주요 비약의 수익을 계산합니다. | 씨앗, 오일 가격과 소모할 피로도를 기반으로<br>제작 시 순이익을 계산합니다. |
