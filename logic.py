@@ -47,7 +47,7 @@ def calculate_fatigue_profit(seed_price, oil_price, fatigue_count):
         fatigue_per_craft = 1
         seeds_per_craft = 6
         cost_per_craft = 1000
-        success_rate = 1
+        success_rate = 0.9
         auction_fee = 0.95
 
         # 총 제작 시도 횟수
